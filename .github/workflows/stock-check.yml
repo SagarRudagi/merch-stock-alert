@@ -25,10 +25,16 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
 
-      - name: Run stock check
+      - name: Run stock check every minute (5x)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
           SUBJECT_PREFIX: ${{ secrets.SUBJECT_PREFIX }}
         run: |
-          PYTHONPATH=src python main.py --once
+          for i in 1 2 3 4 5; do
+            echo "Minute check $i/5"
+            PYTHONPATH=src python main.py --once
+            if [ "$i" -lt 5 ]; then
+              sleep 60
+            fi
+          done
